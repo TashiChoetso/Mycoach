@@ -1,3 +1,5 @@
+# Apply once: Render Dashboard → New → Blueprint. A standalone Docker
+# web service ignores this file, so no database or env vars are created.
 services:
   - type: web
     name: dailyplan-api
@@ -5,12 +7,8 @@ services:
     rootDir: backend
     plan: free
     branch: main
-    buildCommand: |
-      pip install --upgrade pip
-      pip install -r requirements.txt
-    startCommand: |
-      alembic upgrade head
-      uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    buildCommand: pip install --upgrade pip && pip install -r requirements.txt
+    startCommand: alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port $PORT
     envVars:
       - key: PYTHON_VERSION
         value: "3.12"
@@ -22,7 +20,7 @@ services:
           property: connectionString
       - key: REDIS_URL
         fromService:
-          type: redis
+          type: keyvalue
           name: dailyplan-redis
           property: connectionString
       - key: ACCESS_TOKEN_MINUTES
@@ -48,11 +46,8 @@ services:
     rootDir: frontend
     plan: free
     branch: main
-    buildCommand: |
-      npm install
-      npm run build
-    startCommand: |
-      node .next/standalone/server.js
+    buildCommand: npm install && npm run build
+    startCommand: node .next/standalone/server.js
     envVars:
       - key: NODE_VERSION
         value: "22"
@@ -61,10 +56,11 @@ services:
       - key: NEXT_TELEMETRY_DISABLED
         value: "1"
 
-  - type: redis
+  - type: keyvalue
     name: dailyplan-redis
     plan: free
     maxmemoryPolicy: allkeys-lru
+    ipAllowList: []
 
 databases:
   - name: dailyplan-db
