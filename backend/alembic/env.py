@@ -15,7 +15,8 @@ if config.config_file_name is not None:
 
 settings = get_settings()
 # Keep the asyncpg URL — no psycopg2 required.
-config.set_main_option("sqlalchemy.url", settings.database_url)
+# ConfigParser treats % as interpolation; URL-encoded passwords contain it.
+config.set_main_option("sqlalchemy.url", settings.database_url.replace("%", "%%"))
 target_metadata = Base.metadata
 
 

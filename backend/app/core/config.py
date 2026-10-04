@@ -33,6 +33,25 @@ class Settings(BaseSettings):
     auth_rate_limit: int = 10
     auth_rate_window_seconds: int = 60
 
+    @field_validator("database_url", mode="before")
+    @classmethod
+    def use_asyncpg_driver(cls, value: object) -> object:
+        """Render supplies postgres:// or postgresql://. SQLAlchemy async needs asyncpg."""
+        if not isinstance(value, str):
+            return value
+        url = value.strip()
+        if url.startswith("postgres://"):
+            url = "postgresql://" + url[len("postgres://") :]
+        scheme, sep, rest = url.partition("://")
+        if sep and scheme == "postgresql":
+            url = "postgresql+asyncpg://" + rest
+        # asyncpg does not accept libpq's sslmode query parameter.
+        return (
+            url.replace("sslmode=require", "ssl=require")
+            .replace("sslmode=prefer", "ssl=prefer")
+            .replace("sslmode=disable", "ssl=disable")
+        )
+
     @field_validator("secret_key")
     @classmethod
     def secret_must_be_real(cls, value: str) -> str:
