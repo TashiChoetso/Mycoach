@@ -1,3 +1,4 @@
+import os
 import re
 from functools import lru_cache
 from urllib.parse import quote, unquote, urlsplit, urlunsplit
@@ -93,7 +94,11 @@ def _asyncpg_url(value: str) -> str:
 
 
 class Settings(BaseSettings):
-    model_config = SettingsConfigDict(env_file=("../.env", ".env"), extra="ignore")
+    model_config = SettingsConfigDict(
+        env_file=("../.env", ".env"),
+        extra="ignore",
+        env_ignore_empty=True,
+    )
 
     database_url: str = "postgresql+asyncpg://mycoach:mycoach@localhost:5433/mycoach"
     # Set from the Render database when DATABASE_URL itself is not a usable URL.
@@ -144,6 +149,13 @@ class Settings(BaseSettings):
             )
             object.__setattr__(
                 self, "database_url", built.render_as_string(hide_password=False)
+            )
+        elif os.environ.get("RENDER") == "true" and (
+            "localhost" in self.database_url or "127.0.0.1" in self.database_url
+        ):
+            raise ValueError(
+                "DATABASE_URL is empty on this Render service. Sync the Blueprint "
+                "so it creates dailyplan-db and fills DATABASE_URL."
             )
         try:
             make_url(self.database_url)
