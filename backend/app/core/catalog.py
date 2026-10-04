@@ -1,0 +1,326 @@
+DEFAULT_AREAS: list[dict[str, str | int]] = [
+    {"slug": "health", "name": "Health & Fitness", "icon": "heart-pulse", "sort_order": 10},
+    {"slug": "finance", "name": "Finance", "icon": "wallet", "sort_order": 20},
+    {"slug": "productivity", "name": "Productivity", "icon": "list-checks", "sort_order": 30},
+    {"slug": "learning", "name": "Learning", "icon": "book-open", "sort_order": 40},
+    {"slug": "career", "name": "Career", "icon": "briefcase", "sort_order": 50},
+    {"slug": "mental_wellness", "name": "Mental Wellness", "icon": "cloud-sun", "sort_order": 60},
+    {"slug": "sleep", "name": "Sleep", "icon": "moon", "sort_order": 70},
+    {"slug": "relationships", "name": "Relationships", "icon": "users", "sort_order": 80},
+    {"slug": "personal_growth", "name": "Personal Growth", "icon": "sprout", "sort_order": 90},
+    {"slug": "creativity", "name": "Creativity", "icon": "palette", "sort_order": 100},
+    {"slug": "digital_wellness", "name": "Digital Wellness", "icon": "smartphone", "sort_order": 110},
+    {"slug": "spirituality", "name": "Spirituality", "icon": "flame", "sort_order": 120},
+    {"slug": "lifestyle", "name": "Lifestyle", "icon": "home", "sort_order": 130},
+]
+
+AREA_TONES: dict[str, str] = {
+    "health": "rose",
+    "finance": "gold",
+    "productivity": "sage",
+    "learning": "sky",
+    "career": "peach",
+    "mental_wellness": "lilac",
+    "sleep": "indigo",
+    "relationships": "coral",
+    "personal_growth": "moss",
+    "creativity": "sun",
+    "digital_wellness": "slate",
+    "spirituality": "amber",
+    "lifestyle": "stone",
+}
+
+CUSTOM_FOCUS = {
+    "name": "Show up",
+    "prompt": "One honest action in this area today. Small is enough.",
+    "kind": "check",
+    "sort_order": 10,
+}
+
+# Daily practices under each life area. Scores come from these — not from the area name.
+DEFAULT_FOCUSES: dict[str, list[dict[str, str | int | float | None]]] = {
+    "health": [
+        {
+            "slug": "health_move",
+            "name": "Move",
+            "prompt": "20–30 minutes of walking, sport, or a class. Showing up counts.",
+            "kind": "check",
+            "sort_order": 10,
+        },
+        {
+            "slug": "health_strength",
+            "name": "Strength",
+            "prompt": "Any resistance work — gym, bands, or bodyweight.",
+            "kind": "check",
+            "sort_order": 20,
+        },
+        {
+            "slug": "health_fuel",
+            "name": "Fuel",
+            "prompt": "Ate a real meal with protein, not only snacks or caffeine.",
+            "kind": "check",
+            "sort_order": 30,
+        },
+        {
+            "slug": "health_water",
+            "name": "Water",
+            "prompt": "Glasses of water. Eight is a solid student-day target.",
+            "kind": "count",
+            "target_value": 8,
+            "unit": "glasses",
+            "sort_order": 40,
+        },
+    ],
+    "sleep": [
+        {
+            "slug": "sleep_wind_down",
+            "name": "Wind-down",
+            "prompt": "Screens off and lights lower at least 20 minutes before bed.",
+            "kind": "check",
+            "sort_order": 10,
+        },
+        {
+            "slug": "sleep_hours",
+            "name": "Sleep hours",
+            "prompt": "Hours of actual sleep. Seven is the default target.",
+            "kind": "count",
+            "target_value": 7,
+            "unit": "hours",
+            "sort_order": 20,
+        },
+    ],
+    "learning": [
+        {
+            "slug": "learning_study",
+            "name": "Study block",
+            "prompt": "Focused minutes on class, exam, or a skill. Sixty is a full block.",
+            "kind": "count",
+            "target_value": 60,
+            "unit": "min",
+            "sort_order": 10,
+        },
+        {
+            "slug": "learning_practice",
+            "name": "Practice",
+            "prompt": "Applied it — problems, a draft, a lab, speaking out loud.",
+            "kind": "check",
+            "sort_order": 20,
+        },
+        {
+            "slug": "learning_review",
+            "name": "Review",
+            "prompt": "Revisited notes or mistakes while they were still fresh.",
+            "kind": "check",
+            "sort_order": 30,
+        },
+    ],
+    "productivity": [
+        {
+            "slug": "prod_deep_work",
+            "name": "Deep work",
+            "prompt": "Uninterrupted minutes on the one thing that moves the week.",
+            "kind": "count",
+            "target_value": 90,
+            "unit": "min",
+            "sort_order": 10,
+        },
+        {
+            "slug": "prod_important",
+            "name": "One important thing",
+            "prompt": "Finished the task you would still respect tomorrow.",
+            "kind": "check",
+            "sort_order": 20,
+        },
+        {
+            "slug": "prod_shutdown",
+            "name": "Shutdown",
+            "prompt": "Wrote tomorrow’s first step and closed the laptop.",
+            "kind": "check",
+            "sort_order": 30,
+        },
+    ],
+    "career": [
+        {
+            "slug": "career_skill",
+            "name": "Skill",
+            "prompt": "Practiced something the job actually rewards.",
+            "kind": "check",
+            "sort_order": 10,
+        },
+        {
+            "slug": "career_ship",
+            "name": "Ship",
+            "prompt": "Sent the application, PR, email, or portfolio update.",
+            "kind": "check",
+            "sort_order": 20,
+        },
+        {
+            "slug": "career_people",
+            "name": "People",
+            "prompt": "One genuine reach-out — not a spray of applications.",
+            "kind": "check",
+            "sort_order": 30,
+        },
+    ],
+    "finance": [
+        {
+            "slug": "finance_log",
+            "name": "Log spend",
+            "prompt": "Wrote down what left the account today. Awareness before budgets.",
+            "kind": "check",
+            "sort_order": 10,
+        },
+        {
+            "slug": "finance_plan",
+            "name": "Stay in plan",
+            "prompt": "Did not blow the daily envelope on impulse.",
+            "kind": "check",
+            "sort_order": 20,
+        },
+        {
+            "slug": "finance_save",
+            "name": "Put something aside",
+            "prompt": "Any amount moved to savings or debt. Size is secondary.",
+            "kind": "check",
+            "sort_order": 30,
+        },
+    ],
+    "mental_wellness": [
+        {
+            "slug": "mind_pause",
+            "name": "Pause",
+            "prompt": "Five minutes with no phone. Breath, walk, or sit.",
+            "kind": "check",
+            "sort_order": 10,
+        },
+        {
+            "slug": "mind_journal",
+            "name": "Journal",
+            "prompt": "A few honest lines. No performance.",
+            "kind": "check",
+            "sort_order": 20,
+        },
+        {
+            "slug": "mind_kind",
+            "name": "Self-talk",
+            "prompt": "Caught one harsh thought and replaced it with a usable one.",
+            "kind": "check",
+            "sort_order": 30,
+        },
+    ],
+    "relationships": [
+        {
+            "slug": "rel_reach",
+            "name": "Reach out",
+            "prompt": "A message, call, or thank-you that was not transactional.",
+            "kind": "check",
+            "sort_order": 10,
+        },
+        {
+            "slug": "rel_present",
+            "name": "Be present",
+            "prompt": "Gave someone your full attention for a stretch of time.",
+            "kind": "check",
+            "sort_order": 20,
+        },
+    ],
+    "personal_growth": [
+        {
+            "slug": "growth_stretch",
+            "name": "One stretch",
+            "prompt": "Did the slightly uncomfortable thing you had been postponing.",
+            "kind": "check",
+            "sort_order": 10,
+        },
+        {
+            "slug": "growth_reflect",
+            "name": "Reflect",
+            "prompt": "Named one thing that worked and one thing to change.",
+            "kind": "check",
+            "sort_order": 20,
+        },
+    ],
+    "creativity": [
+        {
+            "slug": "create_make",
+            "name": "Make",
+            "prompt": "Minutes making something — draft, sketch, song, photo.",
+            "kind": "count",
+            "target_value": 30,
+            "unit": "min",
+            "sort_order": 10,
+        },
+        {
+            "slug": "create_share",
+            "name": "Share or finish",
+            "prompt": "Shipped a small piece instead of only collecting ideas.",
+            "kind": "check",
+            "sort_order": 20,
+        },
+    ],
+    "digital_wellness": [
+        {
+            "slug": "digital_block",
+            "name": "Phone-free block",
+            "prompt": "A protected stretch with the phone in another room.",
+            "kind": "check",
+            "sort_order": 10,
+        },
+        {
+            "slug": "digital_cutoff",
+            "name": "Evening cutoff",
+            "prompt": "Stopped scrolling before bed instead of negotiating with yourself.",
+            "kind": "check",
+            "sort_order": 20,
+        },
+    ],
+    "spirituality": [
+        {
+            "slug": "spirit_quiet",
+            "name": "Quiet time",
+            "prompt": "Prayer, meditation, or stillness — however you name it.",
+            "kind": "check",
+            "sort_order": 10,
+        },
+        {
+            "slug": "spirit_values",
+            "name": "Live a value",
+            "prompt": "One action that matched who you say you want to be.",
+            "kind": "check",
+            "sort_order": 20,
+        },
+    ],
+    "lifestyle": [
+        {
+            "slug": "life_home",
+            "name": "Home reset",
+            "prompt": "Ten minutes making the space easier to live in tomorrow.",
+            "kind": "check",
+            "sort_order": 10,
+        },
+        {
+            "slug": "life_body_care",
+            "name": "Body care",
+            "prompt": "Shower, laundry, meds, or a meal you actually sat down for.",
+            "kind": "check",
+            "sort_order": 20,
+        },
+    ],
+}
+
+DEFAULT_SCORING_WEIGHTS = {
+    "tasks": 0.30,
+    "habits": 0.30,
+    "goals": 0.20,
+    "consistency": 0.10,
+    "finance": 0.10,
+}
+
+DEFAULT_DASHBOARD_SECTIONS = [
+    "quote",
+    "momentum",
+    "tasks",
+    "habits",
+    "areas",
+    "coach",
+]
