@@ -63,8 +63,8 @@ services:
     rootDir: frontend
     plan: free
     branch: main
-    buildCommand: npm install && npm run build
-    startCommand: node .next/standalone/server.js
+    buildCommand: npm install && npm run build && mkdir -p .next/standalone/.next && cp -r .next/static .next/standalone/.next/static && cp -r public .next/standalone/public
+    startCommand: HOSTNAME=0.0.0.0 node .next/standalone/server.js
     envVars:
       - key: NODE_VERSION
         value: "22"

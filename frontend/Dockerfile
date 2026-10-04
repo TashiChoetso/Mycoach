@@ -18,4 +18,6 @@ COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 EXPOSE 3000
-CMD ["node", "server.js"]
+# Docker sets HOSTNAME to the container id. Next standalone binds to that
+# name, so Render's proxy gets a 502. Force every interface.
+CMD ["sh", "-c", "HOSTNAME=0.0.0.0 node server.js"]
