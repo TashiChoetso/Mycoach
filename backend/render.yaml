@@ -71,3 +71,4 @@ databases:
     databaseName: dailyplan
     user: dailyplan
     plan: free
+
